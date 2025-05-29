@@ -26,7 +26,7 @@ public class main extends javax.swing.JFrame {
         initComponents();
         loadData();
         loadComboBox(jComboBox1);
-        disableinputFields();
+//        disableinputFields();
 
     }
     private void loadData() {
@@ -226,6 +226,11 @@ public class main extends javax.swing.JFrame {
         });
 
         btnDelete.setText("Xóa");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -262,7 +267,7 @@ public class main extends javax.swing.JFrame {
 
         tbThongtin.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null, null, null}
             },
             new String [] {
                 "Mã Sản Phẩm", "Mã Nhà CC", "Tên Sản Phẩm", "Giá", "Số lượng"
@@ -397,6 +402,34 @@ public class main extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        try {
+            Connection conn = dbconnect.getConnection();
+            int selectedRow = tbThongtin.getSelectedRow();
+            if (selectedRow != -1){
+                String maSp = tbThongtin.getValueAt(selectedRow, 0).toString();
+                int confirm = JOptionPane.showConfirmDialog(null, "Bạn muốn xóa sách này?", "Xóa sách", JOptionPane.YES_NO_OPTION);
+                if(confirm == JOptionPane.YES_OPTION){
+                    String sql = "DELETE FROM SanPham WHERE MaSP = ?";
+                    java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, maSp);
+                    pstmt.executeUpdate();
+                    DefaultTableModel model = (DefaultTableModel) tbThongtin.getModel();
+                    model.removeRow(selectedRow);
+                    pstmt.close();
+                    
+                }
+            }else{
+                System.out.println("Chưa chọn sách để xóa");
+            }
+            conn.close();
+        } catch (Exception e) {
+            
+        }
+        clearFields();
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**
      * @param args the command line arguments
